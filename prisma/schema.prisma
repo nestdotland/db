@@ -10,7 +10,7 @@ datasource db {
 /// USER
 model User {
   // Properties
-  id        String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid // TODO: remove @default() in prod
+  id        String   @unique @default(uuid()) @db.Uuid // TODO: remove @default() in prod
   username  String   @db.VarChar(64)
   fullName  String?  @db.VarChar(64)
   avatar    String?
@@ -86,7 +86,7 @@ model UsageQuotaPublish {
 
 model AccessToken {
   // Properties
-  id          String       @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String       @unique @default(uuid()) @db.Uuid
   username    String       @db.VarChar(64)
   sha256      String       @db.Char(64)
   permissions Permission[]
@@ -130,7 +130,7 @@ model Contribution {
 /// MODULE
 model Module {
   // Properties
-  id          String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String   @unique @default(uuid()) @db.Uuid
   authorName  String   @db.VarChar(64)
   name        String   @db.VarChar(64)
   fullName    String?  @db.VarChar(64)
@@ -172,7 +172,7 @@ enum License {
 
 model VanityModule {
   // Properties
-  id         String @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id         String @unique @default(uuid()) @db.Uuid
   name       String @db.VarChar(64)
   authorName String @db.VarChar(64)
   moduleName String @db.VarChar(64)
@@ -226,7 +226,7 @@ enum HookName {
 
 model DevConfigHook {
   // Properties
-  id         String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id         String   @unique @default(uuid()) @db.Uuid
   name       HookName
   command    String
   authorName String   @db.VarChar(64)
@@ -243,7 +243,7 @@ model DevConfigHook {
 /// VERSION
 model Version {
   // Properties
-  id            String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id            String   @unique @default(uuid()) @db.Uuid
   authorName    String   @db.VarChar(64)
   moduleName    String   @db.VarChar(64)
   name          String   @db.VarChar(64)
@@ -275,7 +275,7 @@ model Version {
 
 model Engine {
   // Properties
-  id       String @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id       String @unique @default(uuid()) @db.Uuid
   platform String @db.VarChar(64)
   range    String @db.VarChar(64)
 
@@ -305,7 +305,7 @@ model SupportedEngine {
 
 model Tag {
   // Properties
-  id          String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String   @unique @default(uuid()) @db.Uuid
   name        String   @db.VarChar(64)
   authorName  String   @db.VarChar(64)
   moduleName  String   @db.VarChar(64)
@@ -358,7 +358,7 @@ model TaggedDependencyGraph {
 
 model ThirdPartyModule {
   // Properties
-  id       String @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id       String @unique @default(uuid()) @db.Uuid
   hostname String
   path     String
 
@@ -372,7 +372,7 @@ model ThirdPartyModule {
 
 model ThirdPartyHost {
   // Properties
-  id       String  @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id       String  @unique @default(uuid()) @db.Uuid
   hostname String
   verified Boolean @default(false)
 
@@ -402,7 +402,7 @@ model ThirdPartyDependencyGraph {
 /// FILE
 model File {
   // Properties
-  id          String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id          String   @unique @default(uuid()) @db.Uuid
   authorName  String   @db.VarChar(64)
   moduleName  String   @db.VarChar(64)
   versionName String   @db.VarChar(64)
@@ -422,7 +422,7 @@ model File {
 /// TEAM
 model Team {
   // Properties
-  id         String   @unique @default(dbgenerated("uuid_generate_v4()")) @db.Uuid
+  id         String   @unique @default(uuid()) @db.Uuid
   name       String   @db.VarChar(64)
   ownerName  String   @db.VarChar(64)
   moduleName String   @db.VarChar(64)
