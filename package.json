@@ -3,20 +3,24 @@
   "version": "1.0.0",
   "description": "Repository template",
   "main": "dist/index.js",
-  "repository": "https://github.com/nestdotland/template",
+  "repository": "https://github.com/nestdotland/schema",
   "author": "Maximous Black <maximousblk@gmail.com>",
   "license": "MIT",
   "private": true,
   "scripts": {
-    "start": "ts-node src/index.ts",
-    "build": "tsc",
-    "test": "echo 'no tests are defined'",
-    "fmt": "prettier --check .",
-    "fmt:write": "prettier --write ."
+    "ts": "ts-node",
+    "prisma": "prisma",
+    "push": "prisma db push",
+    "seed": "ts-node ./src/seed.ts",
+    "test": "ts-node ./src/test.ts",
+    "fmt": "prettier -w ."
   },
   "devDependencies": {
+    "@types/mime": "^2.0.3",
     "@types/node": "^14.14.22",
+    "nanoid": "^3.1.25",
     "prettier": "^2.2.1",
+    "prisma": "2.29.1",
     "ts-node": "^9.1.1",
     "typescript": "^4.1.3"
   },
@@ -25,6 +29,10 @@
     "printWidth": 120
   },
   "engines": {
-    "node": "14"
+    "node": "16"
+  },
+  "dependencies": {
+    "@prisma/client": "2.29.1",
+    "mime": "^2.5.2"
   }
 }
