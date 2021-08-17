@@ -51,7 +51,7 @@ export const users = [
     username: 'ry',
     fullName: 'Ryan Dahl',
     avatar: 'https://github.com/ry.png',
-    bio: 'Creator of NodeJS and Deno. No big deal 😎',
+    bio: 'Creator of NodeJS and Deno',
     authTokens: [
       'NEST_7LW3JCPZE3Y587LXU5HJ479VUN5BIFJ9GZMH87IPNCIVCC3EO3R82RG7VCE6V46A',
       'NEST_06TH800F9LBC8VIIP6DNYKH4LQI1W5FC2HREQ1GMNHL75I2AMEQQ48D9SQLH558J',

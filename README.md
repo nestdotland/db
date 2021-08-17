@@ -1,14 +1,14 @@
-# Template
+# Nest DB Schema
 
-A template for nest.land repositories. Remove this sentence and change this header to describe the project this template is being used for.
+TODO
 
 ## Getting started
 
-Instructions to quickly start using the project.
+TODO
 
 ## Contributing
 
-Instructions to quickly setup a dev environment to start contributing to the project.
+TODO
 
 ## License
 
