@@ -3,7 +3,7 @@ docker run \
   --env-file .env \
   --env PGPASSWORD \
   --env PGHOST \
-  --env PGUSER \
+  --env PGUSER=postgres \
   postgres pg_dump -O -x --clean --if-exists -Z 9 \
   -n extensions \
   -n public >nest_dev.sql.gz
