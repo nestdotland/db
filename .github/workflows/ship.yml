@@ -6,7 +6,8 @@ on:
 env:
   REGISTRY: ghcr.io
   IMAGE_NAME: ${{ github.repository }}
-  
+  PGHOST: ${{ secrets.PGHOST }}
+  PGPASSWORD: ${{ secrets.PGPASSWORD }}
 
 jobs:
   build:
