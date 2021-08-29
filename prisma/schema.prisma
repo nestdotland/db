@@ -93,60 +93,9 @@ model AccessToken {
 
 enum Tier {
   // these are only examples
-  HOBBY //      $0 • api  1000 req/hr •  5mb           • public modules
-  PRO //        $4 • api  5000 req/hr • 10mb           • public modules
-  PRO_PLUS //   $4 • api  5000 req/hr • 10mb + $0.1/mb • public modules
-  TEAMS //      $6 • api 10000 req/hr • 10mb           • public modules • private modules • teams
-  TEAMS_PLUS // $6 • api 10000 req/hr • 10mb + $0.1/mb • public modules • private modules • teams
-}
-
-enum StripePlan {
-  HOBBY
-  PRO
-  TEAMS
-  OVERAGE
-}
-
-model StripeCustomer {
-  id       String @db.VarChar(18) // cus_K2Y09LC0tkknJZ
-  username String @db.VarChar(64)
-  tier     Tier   @default(HOBBY)
-  price    Int
-  price_id String @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
-
-  // Relationships
-  subscription StripeSubscription[] @relation("rStripeSubscriptionToStripeCustomer")
-  user         User                 @relation("rStripeCustomerToUser", fields: [username], references: [username])
-
-  // Primary Key
-  @@id([id])
-}
-
-model StripeProduct {
-  id   String     @db.VarChar(19) // prod_K2OkC0R6yfuwhH
-  name String
-  plan StripePlan @unique
-
-  // Relationships
-  subscriptions StripeSubscription[] @relation("rStripeSubscriptionToStripeProduct")
-
-  // Primary Key
-  @@id([id])
-}
-
-model StripeSubscription {
-  // Properties
-  id          String  @db.VarChar(18) // sub_K2Y00SfnTOnuRQ
-  customer_id String  @db.VarChar(18)
-  product_id  String  @db.VarChar(19)
-  active      Boolean
-
-  // Relationships
-  customer StripeCustomer @relation("rStripeSubscriptionToStripeCustomer", fields: [customer_id], references: [id])
-  product  StripeProduct  @relation("rStripeSubscriptionToStripeProduct", fields: [product_id], references: [id])
-
-  // Primary Key
-  @@id([customer_id, product_id])
+  HOBBY // $0 • api  1000 req/hr •  5mb           • public modules
+  PRO // $4 • api  5000 req/hr • 10mb + $0.1/mb • public modules
+  TEAMS // $6 • api 10000 req/hr • 10mb + $0.1/mb • public modules • private modules • teams
 }
 
 enum Permission {
@@ -507,4 +456,54 @@ model TeamMember {
 
   // Primary Key
   @@id([name, teamOwner, teamName])
+}
+
+/// STRIPE
+enum StripePlan {
+  HOBBY
+  PRO
+  TEAMS
+  OVERAGE
+}
+
+model StripeCustomer {
+  id       String @db.VarChar(18) // cus_K2Y09LC0tkknJZ
+  username String @db.VarChar(64)
+  tier     Tier   @default(HOBBY)
+  price    Int
+  price_id String @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
+
+  // Relationships
+  subscription StripeSubscription[] @relation("rStripeSubscriptionToStripeCustomer")
+  user         User                 @relation("rStripeCustomerToUser", fields: [username], references: [username])
+
+  // Primary Key
+  @@id([id])
+}
+
+model StripeProduct {
+  id   String     @db.VarChar(19) // prod_K2OkC0R6yfuwhH
+  name String
+  plan StripePlan @unique
+
+  // Relationships
+  subscriptions StripeSubscription[] @relation("rStripeSubscriptionToStripeProduct")
+
+  // Primary Key
+  @@id([id])
+}
+
+model StripeSubscription {
+  // Properties
+  id          String  @db.VarChar(18) // sub_K2Y00SfnTOnuRQ
+  customer_id String  @db.VarChar(18)
+  product_id  String  @db.VarChar(19)
+  active      Boolean
+
+  // Relationships
+  customer StripeCustomer @relation("rStripeSubscriptionToStripeCustomer", fields: [customer_id], references: [id])
+  product  StripeProduct  @relation("rStripeSubscriptionToStripeProduct", fields: [product_id], references: [id])
+
+  // Primary Key
+  @@id([customer_id, product_id])
 }
