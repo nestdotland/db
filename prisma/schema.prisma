@@ -32,7 +32,7 @@ model User {
   createdTeams  Team[]
   teams         TeamMember[]
   usageQuota    UsageQuota?
-  stripeInfo    StripeCustomer? @relation("rStripeCustomerToUser")
+  stripeInfo    StripeCustomer?
 
   // Primary Key
   @@id([username])
@@ -523,8 +523,8 @@ model StripeCustomer {
   payment_method Json // Stores your customer's payment instruments.
 
   // Relationships
-  subscription StripeSubscription[] @relation("rStripeSubscriptionToStripeCustomer")
-  user         User                 @relation("rStripeCustomerToUser", fields: [username], references: [username])
+  subscription StripeSubscription[]
+  user         User                 @relation(fields: [username], references: [username])
 
   // Primary Key
   @@id([id])
@@ -538,7 +538,7 @@ model StripeProduct {
   active      Boolean // Whether the product is currently available for purchase.
 
   // Relationships
-  subscriptions StripeSubscription[] @relation("rStripeSubscriptionToStripeProduct")
+  subscriptions StripeSubscription[]
   prices        StripePrice[]
 
   // Primary Key
@@ -589,8 +589,8 @@ model StripeSubscription {
 
 
   // Relationships
-  customer StripeCustomer @relation("rStripeSubscriptionToStripeCustomer", fields: [customer_id], references: [id])
-  product  StripeProduct  @relation("rStripeSubscriptionToStripeProduct", fields: [product_id], references: [id])
+  customer StripeCustomer @relation(fields: [customer_id], references: [id])
+  product  StripeProduct  @relation(fields: [product_id], references: [id])
   price    StripePrice    @relation(fields: [price_id], references: [id])
 
   // Primary Key
