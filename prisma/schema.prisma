@@ -164,7 +164,8 @@ model Module {
 
 enum License {
   // ref: https://api.github.com/licenses
-  UNKNOWN // Unknown just means we couldn't figure out what the license name is. It doesn't mean that the license is missing or invalid.
+  // Unknown just means we couldn't figure out what the license name is. It doesn't mean that the license is missing or invalid.
+  UNKNOWN
   BSD_2_CLAUSE
   BSD_3_CLAUSE
   APACHE_2_0
@@ -482,7 +483,7 @@ model StripeCustomer {
   id             String @db.VarChar(18) // cus_K2Y09LC0tkknJZ
   username       String @db.VarChar(64)
   tier           Tier   @default(HOBBY)
-  payment_method Json // Stores your customer's payment instruments.
+  payment_method Json //                   Stores your customer's payment instruments.
 
   // Relationships
   subscription StripeSubscription[]
@@ -497,7 +498,7 @@ model StripeProduct {
   name        String
   description String
   plan        StripePlan @unique
-  active      Boolean // Whether the product is currently available for purchase.
+  active      Boolean //                    Whether the product is currently available for purchase.
 
   // Relationships
   subscriptions StripeSubscription[]
@@ -514,12 +515,12 @@ enum StripePriceInterval {
 
 model StripePrice {
   id                   String              @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
-  price                Int // The unit amount as a positive integer in the smallest currency unit
+  price                Int //                                 The unit amount as a positive integer in the smallest currency unit
   product_id           String              @db.VarChar(19) // prod_K2OkC0R6yfuwhH
-  active               Boolean // Whether the price can be used for new purchases.
-  interval             StripePriceInterval // The frequency at which a subscription is billed.
-  interval_count       Int // The number of intervals between subscription billings.
-  trial_interval_count Int // The number of trial intervals when subscribing a customer to this price
+  active               Boolean //                             Whether the price can be used for new purchases.
+  interval             StripePriceInterval //                 The frequency at which a subscription is billed.
+  interval_count       Int //                                 The number of intervals between subscription billings.
+  trial_interval_count Int //                                 The number of trial intervals when subscribing a customer to this price
 
   // Relationships
   product StripeProduct @relation(fields: [product_id], references: [id])
@@ -551,10 +552,10 @@ model StripeSubscription {
   trial_start    DateTime        @default(now()) // If the subscription has a trial, the beginning of that trial.
   trial_end      DateTime        @default(now()) // If the subscription has a trial, the end of that trial.
   cancel_at_end  DateTime        @default(now()) // If true the subscription has been canceled by the user and will be deleted at the end of the billing period.
-  canceled       Boolean // If the subscription has been canceled by the user
+  canceled       Boolean //                         If the subscription has been canceled by the user
   canceled_at    DateTime        @default(now()) // If the subscription has been canceled, the date of that cancellation. If the subscription was canceled with `cancel_at_period_end`, `canceled_at` will still reflect the date of the initial cancellation request, not the end of the subscription period when the subscription is automatically moved to a canceled state.
   cancel_at      DateTime        @default(now()) // A date in the future at which the subscription will automatically get canceled.
-  ended          Boolean // If the subscription has ended
+  ended          Boolean //                         If the subscription has ended
   ended_at       DateTime        @default(now()) // If the subscription has ended, the timestamp of the date the subscription ended.
   created_at     DateTime        @default(now()) // Time at which the subscription was created.
   updated_at     DateTime        @default(now()) @updatedAt
