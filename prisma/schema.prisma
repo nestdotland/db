@@ -36,7 +36,7 @@ model User {
 }
 
 model UsageQuota {
-  // Properties
+  // Foreign keys
   username String @db.VarChar(64)
 
   // Relationships
@@ -50,10 +50,12 @@ model UsageQuota {
 
 model UsageQuotaApi {
   // Properties
-  username String   @db.VarChar(64)
-  limit    Int      @default(60)
-  used     Int      @default(0)
-  reset    DateTime @default(now()) // TODO: remove @default() in prod
+  limit Int      @default(60)
+  used  Int      @default(0)
+  reset DateTime @default(now()) // TODO: remove @default() in prod
+
+  // Foreign keys
+  username String @db.VarChar(64)
 
   // Relationships
   quota UsageQuota @relation(fields: [username], references: [username])
@@ -64,10 +66,12 @@ model UsageQuotaApi {
 
 model UsageQuotaPublish {
   // Properties
-  username String   @db.VarChar(64)
-  limit    Int      @default(5000000) // 5 Mega Byte
-  used     Int      @default(0)
-  reset    DateTime @default(now()) // TODO: remove @default() in prod
+  limit Int      @default(5000000) // 5 Mega Byte
+  used  Int      @default(0)
+  reset DateTime @default(now()) // TODO: remove @default() in prod
+
+  // Foreign keys
+  username String @db.VarChar(64)
 
   // Relationships
   quota UsageQuota @relation(fields: [username], references: [username])
@@ -79,11 +83,13 @@ model UsageQuotaPublish {
 model AccessToken {
   // Properties
   id          String       @default(uuid()) @db.Uuid
-  username    String       @db.VarChar(64)
-  sha256      String       @unique @db.Char(64)
+  hash        String       @unique @db.Char(64) // TODO: change length according to whatever algo we use
   permissions Permission[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now()) @updatedAt
+
+  // Foreign keys
+  username String @db.VarChar(64)
 
   // Relationships
   user User @relation(fields: [username], references: [username])
@@ -113,7 +119,7 @@ enum Permission {
 }
 
 model Contribution {
-  // Properties
+  // Foreign keys
   contributorName String @db.VarChar(64)
   moduleAuthor    String @db.VarChar(64)
   moduleName      String @db.VarChar(64)
@@ -131,7 +137,6 @@ model Module {
   // Properties
   id          String   @unique @default(uuid()) @db.Uuid
   name        String   @db.VarChar(64)
-  authorName  String   @db.VarChar(64)
   fullName    String?  @db.VarChar(64)
   description String?
   homepage    String?
@@ -147,6 +152,9 @@ model Module {
   unlisted    Boolean  @default(false)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
+
+  // Foreign keys
+  authorName String @db.VarChar(64)
 
   // Relationships
   tags          Tag[]
@@ -183,8 +191,10 @@ enum License {
 
 model VanityModule {
   // Properties
-  id         String @unique @default(uuid()) @db.Uuid
-  name       String @db.VarChar(64)
+  id   String @unique @default(uuid()) @db.Uuid
+  name String @db.VarChar(64)
+
+  // Foreign keys
   authorName String @db.VarChar(64)
   moduleName String @db.VarChar(64)
 
@@ -197,13 +207,15 @@ model VanityModule {
 
 model PublishConfig {
   // Properties
-  authorName String   @db.VarChar(64)
-  moduleName String   @db.VarChar(64)
-  main       String?
-  bin        String[]
-  lockfile   String?
-  importMap  String?
-  updatedAt  DateTime @default(now()) @updatedAt
+  main      String?
+  bin       String[]
+  lockfile  String?
+  importMap String?
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // Foreign keys
+  authorName String @db.VarChar(64)
+  moduleName String @db.VarChar(64)
 
   // Relationships
   module  Module            @relation(fields: [authorName, moduleName], references: [authorName, name])
@@ -215,10 +227,12 @@ model PublishConfig {
 
 model DevConfig {
   // Properties
-  authorName String   @db.VarChar(64)
-  moduleName String   @db.VarChar(64)
-  ignore     String[]
-  updatedAt  DateTime @default(now()) @updatedAt
+  ignore    String[]
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // Foreign keys
+  authorName String @db.VarChar(64)
+  moduleName String @db.VarChar(64)
 
   // Relationships
   module Module          @relation(fields: [authorName, moduleName], references: [authorName, name])
@@ -237,12 +251,14 @@ enum HookName {
 
 model DevConfigHook {
   // Properties
-  id         String   @unique @default(uuid()) @db.Uuid
-  name       HookName
-  authorName String   @db.VarChar(64)
-  moduleName String   @db.VarChar(64)
-  command    String
-  updatedAt  DateTime @default(now()) @updatedAt
+  id        String   @unique @default(uuid()) @db.Uuid
+  name      HookName
+  command   String
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // Foreign keys
+  authorName String @db.VarChar(64)
+  moduleName String @db.VarChar(64)
 
   // Relationships
   config DevConfig @relation(fields: [authorName, moduleName], references: [authorName, moduleName])
@@ -256,8 +272,6 @@ model Version {
   // Properties
   id            String   @unique @default(uuid()) @db.Uuid
   name          String   @db.VarChar(64)
-  authorName    String   @db.VarChar(64)
-  moduleName    String   @db.VarChar(64)
   publisherName String   @db.VarChar(64)
   deprecated    Boolean  @default(false)
   vulnerable    Boolean  @default(false)
@@ -268,6 +282,10 @@ model Version {
   bin           String[]
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
+
+  // Foreign keys
+  authorName String @db.VarChar(64)
+  moduleName String @db.VarChar(64)
 
   // Relationships
   tag                    Tag[]
@@ -298,7 +316,7 @@ model Engine {
 }
 
 model SupportedEngine {
-  // Properties
+  // Foreign keys
   authorName  String @db.VarChar(64)
   moduleName  String @db.VarChar(64)
   versionName String @db.VarChar(64)
@@ -316,13 +334,15 @@ model SupportedEngine {
 
 model Tag {
   // Properties
-  id          String   @unique @default(uuid()) @db.Uuid
-  name        String   @db.VarChar(64)
-  authorName  String   @db.VarChar(64)
-  moduleName  String   @db.VarChar(64)
-  versionName String   @db.VarChar(64)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  id        String   @unique @default(uuid()) @db.Uuid
+  name      String   @db.VarChar(64)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  // Foreign keys
+  authorName  String @db.VarChar(64)
+  moduleName  String @db.VarChar(64)
+  versionName String @db.VarChar(64)
 
   // Relationships
   dependents TaggedDependencyGraph[]
@@ -334,7 +354,7 @@ model Tag {
 }
 
 model DependencyGraph {
-  // Properties
+  // Foreign keys
   dependentAuthor   String @db.VarChar(64)
   dependentName     String @db.VarChar(64)
   dependentVersion  String @db.VarChar(64)
@@ -351,7 +371,7 @@ model DependencyGraph {
 }
 
 model TaggedDependencyGraph {
-  // Properties
+  // Foreign keys
   dependentAuthor  String @db.VarChar(64)
   dependentName    String @db.VarChar(64)
   dependentVersion String @db.VarChar(64)
@@ -369,9 +389,11 @@ model TaggedDependencyGraph {
 
 model ThirdPartyModule {
   // Properties
-  id       String @unique @default(uuid()) @db.Uuid
+  id   String @unique @default(uuid()) @db.Uuid
+  path String
+
+  // Foreign keys
   hostname String
-  path     String
 
   // Relationships
   host       ThirdPartyHost              @relation(fields: [hostname], references: [hostname])
@@ -395,7 +417,7 @@ model ThirdPartyHost {
 }
 
 model ThirdPartyDependencyGraph {
-  // Properties
+  // Foreign keys
   dependentAuthor  String @db.VarChar(64)
   dependentName    String @db.VarChar(64)
   dependentVersion String @db.VarChar(64)
@@ -413,15 +435,17 @@ model ThirdPartyDependencyGraph {
 /// FILE
 model File {
   // Properties
-  id          String   @unique @default(uuid()) @db.Uuid
-  authorName  String   @db.VarChar(64)
-  moduleName  String   @db.VarChar(64)
-  versionName String   @db.VarChar(64)
-  path        String
-  txid        String   @db.VarChar(43) // E1qkswwu4jfKIUJQ_-aahNzvUeG1lAJxaBjO8x6Uxro
-  size        Int
-  mimeType    String?  @db.VarChar(64)
-  createdAt   DateTime @default(now())
+  id        String   @unique @default(uuid()) @db.Uuid
+  path      String
+  txid      String   @db.VarChar(43) // E1qkswwu4jfKIUJQ_-aahNzvUeG1lAJxaBjO8x6Uxro
+  size      Int
+  mimeType  String?  @db.VarChar(64)
+  createdAt DateTime @default(now())
+
+  // Foreign keys
+  authorName  String @db.VarChar(64)
+  moduleName  String @db.VarChar(64)
+  versionName String @db.VarChar(64)
 
   // Relationships
   version Version @relation(fields: [authorName, moduleName, versionName], references: [authorName, moduleName, name])
@@ -435,10 +459,12 @@ model Team {
   // Properties
   id         String   @unique @default(uuid()) @db.Uuid
   name       String   @db.VarChar(64)
-  ownerName  String   @db.VarChar(64)
   moduleName String   @db.VarChar(64)
   createdAt  DateTime
   updatedAt  DateTime
+
+  // Foreign keys
+  ownerName String @db.VarChar(64)
 
   // Relationships
   members TeamMember[]
@@ -452,9 +478,11 @@ model Team {
 model TeamMember {
   // Properties
   permissions TeamPermission[]
-  memberName  String           @db.VarChar(64)
-  teamOwner   String           @db.VarChar(64)
-  teamName    String           @db.VarChar(64)
+
+  // Foreign keys
+  memberName String @db.VarChar(64)
+  teamOwner  String @db.VarChar(64)
+  teamName   String @db.VarChar(64)
 
   // Relationships
   team Team @relation(fields: [teamOwner, teamName], references: [ownerName, name])
@@ -481,9 +509,11 @@ enum StripePlan {
 
 model StripeCustomer {
   id             String @db.VarChar(18) // cus_K2Y09LC0tkknJZ
-  username       String @db.VarChar(64)
   tier           Tier   @default(HOBBY)
   payment_method Json //                   Stores your customer's payment instruments.
+
+  // Foreign keys
+  username String @db.VarChar(64)
 
   // Relationships
   subscription StripeSubscription[]
@@ -516,11 +546,13 @@ enum StripePriceInterval {
 model StripePrice {
   id                   String              @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
   price                Int //                                 The unit amount as a positive integer in the smallest currency unit
-  product_id           String              @db.VarChar(19) // prod_K2OkC0R6yfuwhH
   active               Boolean //                             Whether the price can be used for new purchases.
   interval             StripePriceInterval //                 The frequency at which a subscription is billed.
   interval_count       Int //                                 The number of intervals between subscription billings.
   trial_interval_count Int //                                 The number of trial intervals when subscribing a customer to this price
+
+  // Foreign keys
+  product_id String @db.VarChar(19) // prod_K2OkC0R6yfuwhH
 
   // Relationships
   product StripeProduct @relation(fields: [product_id], references: [id])
@@ -543,9 +575,6 @@ enum StripeSubStatus {
 model StripeSubscription {
   // Properties
   id             String          @db.VarChar(18) // sub_K2Y00SfnTOnuRQ
-  customer_id    String          @db.VarChar(18)
-  product_id     String          @db.VarChar(19)
-  price_id       String          @db.VarChar(30)
   status         StripeSubStatus
   interval_start DateTime        @default(now()) // Start of the current period that the subscription has been invoiced for.
   interval_end   DateTime        @default(now()) // End of the current period that the subscription has been invoiced for. 
@@ -560,6 +589,10 @@ model StripeSubscription {
   created_at     DateTime        @default(now()) // Time at which the subscription was created.
   updated_at     DateTime        @default(now()) @updatedAt
 
+  // Foreign keys
+  customer_id String @db.VarChar(18)
+  product_id  String @db.VarChar(19)
+  price_id    String @db.VarChar(30)
 
   // Relationships
   customer StripeCustomer @relation(fields: [customer_id], references: [id])
