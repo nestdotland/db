@@ -1,7 +1,9 @@
 import { users, modules } from './data';
 import { PrismaClient } from '@prisma/client';
+import { nanoid } from 'nanoid';
 import mimeType from 'mime/lite';
 import * as crypto from 'crypto';
+import prettyBytes from 'pretty-bytes';
 
 const prisma = new PrismaClient();
 mimeType.define({ 'application/typescript': ['ts', 'tsx'] }, true);
@@ -63,7 +65,7 @@ export async function seed() {
             const hash = crypto.createHash('sha256');
             return {
               username: user.username,
-              sha256: hash.update(token).digest('hex'),
+              hash: hash.update(token).digest('hex'),
             };
           });
         })
@@ -186,8 +188,8 @@ export async function seed() {
                 moduleName: moduleData.name,
                 versionName: version.name,
                 path: file,
-                size: Math.floor(Math.random() * 2000),
-                url: `${moduleData.src}${version}/${file}`,
+                size: Math.floor(Math.random() * 1500),
+                txid: nanoid(43),
                 mimeType: mimeType.getType(file),
               };
             })
@@ -306,6 +308,10 @@ export async function seed() {
     modules: await prisma.module.count(),
     versions: await prisma.version.count(),
     files: await prisma.file.count(),
+    data: await prisma.file
+      .findMany()
+      .then((files) => files.map(({ size }) => size).reduce((a, b) => a + b))
+      .then((bytes) => prettyBytes(bytes)),
   });
 }
 
