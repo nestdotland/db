@@ -65,7 +65,7 @@ export async function seed() {
             const hash = crypto.createHash('sha256');
             return {
               username: user.username,
-              sha256: hash.update(token).digest('hex'),
+              hash: hash.update(token).digest('hex'),
             };
           });
         })
