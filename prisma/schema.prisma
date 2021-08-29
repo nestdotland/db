@@ -467,11 +467,10 @@ enum StripePlan {
 }
 
 model StripeCustomer {
-  id       String @db.VarChar(18) // cus_K2Y09LC0tkknJZ
-  username String @db.VarChar(64)
-  tier     Tier   @default(HOBBY)
-  price    Int
-  price_id String @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
+  id             String @db.VarChar(18) // cus_K2Y09LC0tkknJZ
+  username       String @db.VarChar(64)
+  tier           Tier   @default(HOBBY)
+  payment_method Json // Stores your customer's payment instruments.
 
   // Relationships
   subscription StripeSubscription[] @relation("rStripeSubscriptionToStripeCustomer")
@@ -482,28 +481,78 @@ model StripeCustomer {
 }
 
 model StripeProduct {
-  id   String     @db.VarChar(19) // prod_K2OkC0R6yfuwhH
-  name String
-  plan StripePlan @unique
+  id          String     @db.VarChar(19) // prod_K2OkC0R6yfuwhH
+  name        String
+  description String
+  plan        StripePlan @unique
+  active      Boolean // Whether the product is currently available for purchase.
 
   // Relationships
   subscriptions StripeSubscription[] @relation("rStripeSubscriptionToStripeProduct")
+  prices        StripePrice[]
 
   // Primary Key
   @@id([id])
 }
 
+enum StripePriceInterval {
+  MONTH
+  YEAR
+}
+
+model StripePrice {
+  id                   String              @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
+  price                Int // The unit amount as a positive integer in the smallest currency unit
+  product_id           String              @db.VarChar(19) // prod_K2OkC0R6yfuwhH
+  active               Boolean // Whether the price can be used for new purchases.
+  interval             StripePriceInterval // The frequency at which a subscription is billed.
+  interval_count       Int // The number of intervals between subscription billings.
+  trial_interval_count Int // The number of trial intervals when subscribing a customer to this price
+
+  // Relationships
+  product StripeProduct @relation(fields: [product_id], references: [id])
+
+  // Primary Key
+  StripeSubscription StripeSubscription[]
+  @@id([id])
+}
+
 model StripeSubscription {
   // Properties
-  id          String  @db.VarChar(18) // sub_K2Y00SfnTOnuRQ
-  customer_id String  @db.VarChar(18)
-  product_id  String  @db.VarChar(19)
-  active      Boolean
+  id             String          @db.VarChar(18) // sub_K2Y00SfnTOnuRQ
+  customer_id    String          @db.VarChar(18)
+  product_id     String          @db.VarChar(19)
+  price_id       String          @db.VarChar(30)
+  status         StripeSubStatus
+  interval_start DateTime        @default(now()) // Start of the current period that the subscription has been invoiced for.
+  interval_end   DateTime        @default(now()) // End of the current period that the subscription has been invoiced for. 
+  trial_start    DateTime        @default(now()) // If the subscription has a trial, the beginning of that trial.
+  trial_end      DateTime        @default(now()) // If the subscription has a trial, the end of that trial.
+  cancel_at_end  DateTime        @default(now()) // If true the subscription has been canceled by the user and will be deleted at the end of the billing period.
+  canceled       Boolean // If the subscription has been canceled by the user
+  canceled_at    DateTime        @default(now()) // If the subscription has been canceled, the date of that cancellation. If the subscription was canceled with `cancel_at_period_end`, `canceled_at` will still reflect the date of the initial cancellation request, not the end of the subscription period when the subscription is automatically moved to a canceled state.
+  cancel_at      DateTime        @default(now()) // A date in the future at which the subscription will automatically get canceled.
+  ended          Boolean // If the subscription has ended
+  ended_at       DateTime        @default(now()) // If the subscription has ended, the timestamp of the date the subscription ended.
+  created_at     DateTime        @default(now()) // Time at which the subscription was created.
+  updated_at     DateTime        @default(now()) @updatedAt
+
 
   // Relationships
   customer StripeCustomer @relation("rStripeSubscriptionToStripeCustomer", fields: [customer_id], references: [id])
   product  StripeProduct  @relation("rStripeSubscriptionToStripeProduct", fields: [product_id], references: [id])
+  price    StripePrice    @relation(fields: [price_id], references: [id])
 
   // Primary Key
   @@id([customer_id, product_id])
+}
+
+enum StripeSubStatus {
+  TRIAL
+  ACTIVE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  PAST_DUE
+  UNPAID
 }
