@@ -1,9 +1,6 @@
 generator client {
-  provider = "prisma-client-js"
-}
-
-generator nexusPrisma {
-  provider = "nexus-prisma"
+  provider        = "prisma-client-js"
+  previewFeatures = ["namedConstraints"]
 }
 
 datasource db {
@@ -28,10 +25,10 @@ model User {
   modules       Module[]
   publishes     Version[]
   contributions Contribution[]
+  usageQuota    UsageQuota?
   accessTokens  AccessToken[]
   createdTeams  Team[]
   teams         TeamMember[]
-  usageQuota    UsageQuota?
   stripeInfo    StripeCustomer?
 
   // Primary Key
@@ -39,7 +36,7 @@ model User {
 }
 
 model UsageQuota {
-  // Foreign keys
+  // Properties
   username String @db.VarChar(64)
 
   // Relationships
@@ -53,13 +50,10 @@ model UsageQuota {
 
 model UsageQuotaApi {
   // Properties
-  limit         Int      @default(60)
-  used          Int      @default(0)
-  reset         DateTime @default(now()) // TODO: remove @default() in prod
-  maxComplexity Int      @default(4000)
-
-  // Foreign keys
-  username String @db.VarChar(64)
+  username String   @db.VarChar(64)
+  limit    Int      @default(60)
+  used     Int      @default(0)
+  reset    DateTime @default(now()) // TODO: remove @default() in prod
 
   // Relationships
   quota UsageQuota @relation(fields: [username], references: [username])
@@ -70,12 +64,10 @@ model UsageQuotaApi {
 
 model UsageQuotaPublish {
   // Properties
-  limit Int      @default(5000000) // 5 Mega Byte
-  used  Int      @default(0)
-  reset DateTime @default(now()) // TODO: remove @default() in prod
-
-  // Foreign keys
-  username String @db.VarChar(64)
+  username String   @db.VarChar(64)
+  limit    Int      @default(5000000) // 5 Mega Byte
+  used     Int      @default(0)
+  reset    DateTime @default(now()) // TODO: remove @default() in prod
 
   // Relationships
   quota UsageQuota @relation(fields: [username], references: [username])
@@ -86,20 +78,18 @@ model UsageQuotaPublish {
 
 model AccessToken {
   // Properties
-  id          String       @unique @default(uuid()) @db.Uuid
-  sha256      String       @db.Char(64)
+  id          String       @default(uuid()) @db.Uuid
+  username    String       @db.VarChar(64)
+  sha256      String       @unique @db.Char(64)
   permissions Permission[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now()) @updatedAt
-
-  // Foreign keys
-  username String @db.VarChar(64)
 
   // Relationships
   user User @relation(fields: [username], references: [username])
 
   // Primary Key
-  @@id([sha256])
+  @@id([id], map: "token")
 }
 
 enum Tier {
@@ -123,7 +113,7 @@ enum Permission {
 }
 
 model Contribution {
-  // Foreign keys
+  // Properties
   contributorName String @db.VarChar(64)
   moduleAuthor    String @db.VarChar(64)
   moduleName      String @db.VarChar(64)
@@ -133,7 +123,7 @@ model Contribution {
   module      Module @relation(fields: [moduleAuthor, moduleName], references: [authorName, name])
 
   // Primary Key
-  @@id([contributorName, moduleAuthor, moduleName])
+  @@id([contributorName, moduleAuthor, moduleName], map: "contribution")
 }
 
 /// MODULE
@@ -141,6 +131,7 @@ model Module {
   // Properties
   id          String   @unique @default(uuid()) @db.Uuid
   name        String   @db.VarChar(64)
+  authorName  String   @db.VarChar(64)
   fullName    String?  @db.VarChar(64)
   description String?
   homepage    String?
@@ -157,37 +148,42 @@ model Module {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @default(now()) @updatedAt
 
-  // Foreign keys
-  authorName String @db.VarChar(64)
-
   // Relationships
-  author        User            @relation(fields: [authorName], references: [username])
-  teams         TeamOwnership[]
-  versions      Version[]
   tags          Tag[]
-  contributors  Contribution[]
-  vanityName    VanityModule?
-  publishConfig PublishConfig?
+  teams         Team[]
+  versions      Version[]
   devConfig     DevConfig?
+  vanityName    VanityModule?
+  contributors  Contribution[]
+  publishConfig PublishConfig?
+  author        User           @relation(fields: [authorName], references: [username])
 
   // Primary Key
-  @@id([authorName, name])
+  @@id([authorName, name], map: "module")
 }
 
 enum License {
+  // ref: https://api.github.com/licenses
   UNKNOWN // Unknown just means we couldn't figure out what the license name is. It doesn't mean that the license is missing or invalid.
-  UNLICENSED
+  BSD_2_CLAUSE
+  BSD_3_CLAUSE
+  APACHE_2_0
+  UNLICENSE
+  AGPL_3_0
+  LGPL_2_1
+  BSL_1_0
+  CC0_1_0
+  EPL_2_0
+  GPL_2_0
+  GPL_3_0
+  MPL_2_0
   MIT
-  // TODO: Create a table for licenses
-  // supported licenses list: https://spdx.org/licenses/
 }
 
 model VanityModule {
   // Properties
-  id   String @unique @default(uuid()) @db.Uuid
-  name String @db.VarChar(64)
-
-  // Foreign keys
+  id         String @unique @default(uuid()) @db.Uuid
+  name       String @db.VarChar(64)
   authorName String @db.VarChar(64)
   moduleName String @db.VarChar(64)
 
@@ -195,73 +191,63 @@ model VanityModule {
   module Module @relation(fields: [authorName, moduleName], references: [authorName, name])
 
   // Primary Key
-  @@id([name, authorName, moduleName])
+  @@id([name, authorName, moduleName], map: "vanity_module")
 }
 
 model PublishConfig {
   // Properties
-  main      String?
-  bin       String[]
-  lockfile  String?
-  importMap String?
-  updatedAt DateTime @default(now()) @updatedAt
-
-  // Foreign keys
-  authorName String @db.VarChar(64)
-  moduleName String @db.VarChar(64)
+  authorName String   @db.VarChar(64)
+  moduleName String   @db.VarChar(64)
+  main       String?
+  bin        String[]
+  lockfile   String?
+  importMap  String?
+  updatedAt  DateTime @default(now()) @updatedAt
 
   // Relationships
   module  Module            @relation(fields: [authorName, moduleName], references: [authorName, name])
   engines SupportedEngine[]
 
   // Primary Key
-  @@id([authorName, moduleName])
+  @@id([authorName, moduleName], map: "publish_config")
 }
 
 model DevConfig {
   // Properties
-  ignore    String[]
-  updatedAt DateTime @default(now()) @updatedAt
-
-  // Foreign keys
-  authorName String @db.VarChar(64)
-  moduleName String @db.VarChar(64)
+  authorName String   @db.VarChar(64)
+  moduleName String   @db.VarChar(64)
+  ignore     String[]
+  updatedAt  DateTime @default(now()) @updatedAt
 
   // Relationships
   module Module          @relation(fields: [authorName, moduleName], references: [authorName, name])
   hooks  DevConfigHook[]
 
   // Primary Key
-  @@id([authorName, moduleName])
+  @@id([authorName, moduleName], map: "dev_config")
 }
 
-enum HookPrefix {
-  PRE
-  POST
-}
-
-enum HookAction {
-  PACK
-  PUBLISH
+enum HookName {
+  PRE_PACK
+  POST_PACK
+  PRE_PUBLISH
+  POST_PUBLISH
 }
 
 model DevConfigHook {
   // Properties
-  id        String     @unique @default(uuid()) @db.Uuid
-  prefix    HookPrefix
-  action    HookAction
-  command   String
-  updatedAt DateTime   @default(now()) @updatedAt
-
-  // Foreign keys
-  authorName String @db.VarChar(64)
-  moduleName String @db.VarChar(64)
+  id         String   @unique @default(uuid()) @db.Uuid
+  name       HookName
+  authorName String   @db.VarChar(64)
+  moduleName String   @db.VarChar(64)
+  command    String
+  updatedAt  DateTime @default(now()) @updatedAt
 
   // Relationships
   config DevConfig @relation(fields: [authorName, moduleName], references: [authorName, moduleName])
 
   // Primary Key
-  @@id([authorName, moduleName, prefix, action])
+  @@id([authorName, moduleName, name], map: "dev_hook")
 }
 
 /// VERSION
@@ -269,6 +255,8 @@ model Version {
   // Properties
   id            String   @unique @default(uuid()) @db.Uuid
   name          String   @db.VarChar(64)
+  authorName    String   @db.VarChar(64)
+  moduleName    String   @db.VarChar(64)
   publisherName String   @db.VarChar(64)
   deprecated    Boolean  @default(false)
   vulnerable    Boolean  @default(false)
@@ -280,13 +268,7 @@ model Version {
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
 
-  // Foreign keys
-  authorName String @db.VarChar(64)
-  moduleName String @db.VarChar(64)
-
   // Relationships
-  module                 Module                      @relation(fields: [authorName, moduleName], references: [authorName, name])
-  publisher              User                        @relation(fields: [publisherName], references: [username])
   tag                    Tag[]
   files                  File[]
   engines                SupportedEngine[]
@@ -294,9 +276,11 @@ model Version {
   dependencies           DependencyGraph[]           @relation("rDependencyToVersion")
   taggedDependencies     TaggedDependencyGraph[]
   thirdPartyDependencies ThirdPartyDependencyGraph[]
+  publisher              User                        @relation(fields: [publisherName], references: [username])
+  module                 Module                      @relation(fields: [authorName, moduleName], references: [authorName, name])
 
   // Primary Key
-  @@id([authorName, moduleName, name])
+  @@id([authorName, moduleName, name], map: "version")
 }
 
 model Engine {
@@ -309,11 +293,11 @@ model Engine {
   support SupportedEngine[]
 
   // Primary Key
-  @@id([platform, range])
+  @@id([platform, range], map: "engine")
 }
 
 model SupportedEngine {
-  // Foreign keys
+  // Properties
   authorName  String @db.VarChar(64)
   moduleName  String @db.VarChar(64)
   versionName String @db.VarChar(64)
@@ -331,27 +315,25 @@ model SupportedEngine {
 
 model Tag {
   // Properties
-  id        String   @unique @default(uuid()) @db.Uuid
-  name      String   @db.VarChar(64)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  // Foreign keys
-  authorName  String @db.VarChar(64)
-  moduleName  String @db.VarChar(64)
-  versionName String @db.VarChar(64)
+  id          String   @unique @default(uuid()) @db.Uuid
+  name        String   @db.VarChar(64)
+  authorName  String   @db.VarChar(64)
+  moduleName  String   @db.VarChar(64)
+  versionName String   @db.VarChar(64)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @default(now()) @updatedAt
 
   // Relationships
+  dependents TaggedDependencyGraph[]
   module     Module                  @relation(fields: [authorName, moduleName], references: [authorName, name])
   version    Version                 @relation(fields: [authorName, moduleName, versionName], references: [authorName, moduleName, name])
-  dependents TaggedDependencyGraph[]
 
   // Primary Key
-  @@id([authorName, moduleName, name])
+  @@id([authorName, moduleName, name], map: "tag")
 }
 
 model DependencyGraph {
-  // Foreign keys
+  // Properties
   dependentAuthor   String @db.VarChar(64)
   dependentName     String @db.VarChar(64)
   dependentVersion  String @db.VarChar(64)
@@ -368,7 +350,7 @@ model DependencyGraph {
 }
 
 model TaggedDependencyGraph {
-  // Foreign keys
+  // Properties
   dependentAuthor  String @db.VarChar(64)
   dependentName    String @db.VarChar(64)
   dependentVersion String @db.VarChar(64)
@@ -386,18 +368,16 @@ model TaggedDependencyGraph {
 
 model ThirdPartyModule {
   // Properties
-  id   String @unique @default(uuid()) @db.Uuid
-  path String
-
-  // Foreign keys
+  id       String @unique @default(uuid()) @db.Uuid
   hostname String
+  path     String
 
   // Relationships
   host       ThirdPartyHost              @relation(fields: [hostname], references: [hostname])
   dependents ThirdPartyDependencyGraph[]
 
   // Primary Key
-  @@id([path, hostname])
+  @@id([hostname, path], map: "third_party_module")
 }
 
 model ThirdPartyHost {
@@ -410,11 +390,11 @@ model ThirdPartyHost {
   modules ThirdPartyModule[]
 
   // Primary Key
-  @@id([hostname])
+  @@id([hostname], map: "host")
 }
 
 model ThirdPartyDependencyGraph {
-  // Foreign keys
+  // Properties
   dependentAuthor  String @db.VarChar(64)
   dependentName    String @db.VarChar(64)
   dependentVersion String @db.VarChar(64)
@@ -446,7 +426,7 @@ model File {
   version Version @relation(fields: [authorName, moduleName, versionName], references: [authorName, moduleName, name])
 
   // Primary Key
-  @@id([authorName, moduleName, versionName, path])
+  @@id([authorName, moduleName, versionName, path], map: "file")
 }
 
 /// TEAM
@@ -454,37 +434,33 @@ model Team {
   // Properties
   id         String   @unique @default(uuid()) @db.Uuid
   name       String   @db.VarChar(64)
+  ownerName  String   @db.VarChar(64)
   moduleName String   @db.VarChar(64)
   createdAt  DateTime
   updatedAt  DateTime
 
-  // Foreign keys
-  ownerName String @db.VarChar(64)
-
   // Relationships
   members TeamMember[]
-  owner   User            @relation(fields: [ownerName], references: [username])
-  module  TeamOwnership[]
+  owner   User         @relation(fields: [ownerName], references: [username])
+  module  Module       @relation(fields: [ownerName, moduleName], references: [authorName, name])
 
   // Primary Key
-  @@id([ownerName, name])
+  @@id([ownerName, name], map: "team")
 }
 
 model TeamMember {
   // Properties
   permissions TeamPermission[]
-
-  // Foreign keys
-  memberName String @db.VarChar(64)
-  teamOwner  String @db.VarChar(64)
-  teamName   String @db.VarChar(64)
+  memberName  String           @db.VarChar(64)
+  teamOwner   String           @db.VarChar(64)
+  teamName    String           @db.VarChar(64)
 
   // Relationships
   team Team @relation(fields: [teamOwner, teamName], references: [ownerName, name])
   user User @relation(fields: [memberName], references: [username])
 
   // Primary Key
-  @@id([memberName, teamOwner, teamName])
+  @@id([memberName, teamOwner, teamName], map: "member")
 }
 
 enum TeamPermission {
@@ -492,20 +468,6 @@ enum TeamPermission {
   TEAM_WRITE
   MODULE_WRITE
   MODULE_PUBLISH
-}
-
-model TeamOwnership {
-  // Foreign keys
-  teamName     String @db.VarChar(64)
-  teamOwner    String @db.VarChar(64)
-  moduleAuthor String @db.VarChar(64)
-  moduleName   String @db.VarChar(64)
-
-  // Relationships
-  team   Team   @relation(fields: [teamOwner, teamName], references: [ownerName, name])
-  module Module @relation(fields: [moduleAuthor, moduleName], references: [authorName, name])
-
-  @@id([teamOwner, teamName, moduleAuthor, moduleName])
 }
 
 /// STRIPE
@@ -527,7 +489,7 @@ model StripeCustomer {
   user         User                 @relation(fields: [username], references: [username])
 
   // Primary Key
-  @@id([id])
+  @@id([id], map: "customer")
 }
 
 model StripeProduct {
@@ -542,7 +504,7 @@ model StripeProduct {
   prices        StripePrice[]
 
   // Primary Key
-  @@id([id])
+  @@id([id], map: "product")
 }
 
 enum StripePriceInterval {
@@ -564,7 +526,17 @@ model StripePrice {
 
   // Primary Key
   StripeSubscription StripeSubscription[]
-  @@id([id])
+  @@id([id], map: "price")
+}
+
+enum StripeSubStatus {
+  TRIAL
+  ACTIVE
+  CANCELED
+  INCOMPLETE
+  INCOMPLETE_EXPIRED
+  PAST_DUE
+  UNPAID
 }
 
 model StripeSubscription {
@@ -594,15 +566,5 @@ model StripeSubscription {
   price    StripePrice    @relation(fields: [price_id], references: [id])
 
   // Primary Key
-  @@id([customer_id, product_id])
-}
-
-enum StripeSubStatus {
-  TRIAL
-  ACTIVE
-  CANCELED
-  INCOMPLETE
-  INCOMPLETE_EXPIRED
-  PAST_DUE
-  UNPAID
+  @@id([id], map: "subscription")
 }
