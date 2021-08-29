@@ -3,6 +3,7 @@ import { PrismaClient } from '@prisma/client';
 import { nanoid } from 'nanoid';
 import mimeType from 'mime/lite';
 import * as crypto from 'crypto';
+import prettyBytes from 'pretty-bytes';
 
 const prisma = new PrismaClient();
 mimeType.define({ 'application/typescript': ['ts', 'tsx'] }, true);
@@ -307,6 +308,10 @@ export async function seed() {
     modules: await prisma.module.count(),
     versions: await prisma.version.count(),
     files: await prisma.file.count(),
+    data: await prisma.file
+      .findMany()
+      .then((files) => files.map(({ size }) => size).reduce((a, b) => a + b))
+      .then((bytes) => prettyBytes(bytes)),
   });
 }
 

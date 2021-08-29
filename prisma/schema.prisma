@@ -28,7 +28,7 @@ model User {
   accessTokens  AccessToken[]   @relation("rAccessTokenToUser")
   createdTeams  Team[]          @relation("rTeamToUser")
   teams         TeamMember[]    @relation("rMemberToUser")
-  stripe        StripeCustomer? @relation("rStripeCustomerToUser")
+  stripeInfo    StripeCustomer? @relation("rStripeCustomerToUser")
 
   // Primary Key
   @@id([username])
