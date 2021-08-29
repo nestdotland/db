@@ -17,5 +17,8 @@ jobs:
         with:
           node-version: 16
 
+      - name: Install deps
+        run: yarn
+
       - name: Check Formating
         run: yarn fmt
