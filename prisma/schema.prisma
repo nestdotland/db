@@ -94,7 +94,7 @@ model AccessToken {
 enum Tier {
   // these are only examples
   HOBBY // $0 • api  1000 req/hr •  5mb           • public modules
-  PRO // $4 • api  5000 req/hr • 10mb + $0.1/mb • public modules
+  PRO //   $4 • api  5000 req/hr • 10mb + $0.1/mb • public modules
   TEAMS // $6 • api 10000 req/hr • 10mb + $0.1/mb • public modules • private modules • teams
 }
 
