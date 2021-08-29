@@ -405,7 +405,7 @@ model File {
   moduleName  String   @db.VarChar(64)
   versionName String   @db.VarChar(64)
   path        String
-  url         String
+  txid        String   @db.VarChar(43) // E1qkswwu4jfKIUJQ_-aahNzvUeG1lAJxaBjO8x6Uxro
   size        Int
   mimeType    String?  @db.VarChar(64)
   createdAt   DateTime @default(now())

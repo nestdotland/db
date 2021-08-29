@@ -1,5 +1,6 @@
 import { users, modules } from './data';
 import { PrismaClient } from '@prisma/client';
+import { nanoid } from 'nanoid';
 import mimeType from 'mime/lite';
 import * as crypto from 'crypto';
 
@@ -186,8 +187,8 @@ export async function seed() {
                 moduleName: moduleData.name,
                 versionName: version.name,
                 path: file,
-                size: Math.floor(Math.random() * 2000),
-                url: `${moduleData.src}${version}/${file}`,
+                size: Math.floor(Math.random() * 1500),
+                txid: nanoid(43),
                 mimeType: mimeType.getType(file),
               };
             })
