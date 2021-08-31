@@ -56,10 +56,10 @@
   resolved "https://registry.yarnpkg.com/@types/mime/-/mime-2.0.3.tgz#c893b73721db73699943bfc3653b1deb7faa4a3a"
   integrity sha512-Jus9s4CDbqwocc5pOAnh8ShfrnMcPHuJYzVcSUU7lrh8Ni5HuIqX3oilL86p3dlTrk0LzHRCgA/GQ7uNCw6l2Q==
 
-"@types/node@^16.7.4":
-  version "16.7.5"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.5.tgz#96142b243977b03d99c338fdb09241d286102711"
-  integrity sha512-E7SpxDXoHEpmZ9C1gSqwadhE6zPRtf3g0gJy9Y51DsImnR5TcDs3QEiV/3Q7zOM8LWaZp5Gph71NK6ElVMG1IQ==
+"@types/node@^16.7.7":
+  version "16.7.7"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-16.7.7.tgz#73b345af160b495716cf7e2b54b68f701320f08b"
+  integrity sha512-bxWC4rgIF/FjM7JsPvpk6ZKGITgw27qsYCbi6h4kWZWYpchOLENgvFaRBZUc64Q/M1y+X2EteahRbyo8QFCKdw==
 
 acorn-walk@^8.1.1:
   version "8.1.1"
