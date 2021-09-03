@@ -10,6 +10,7 @@
   "scripts": {
     "ts": "ts-node",
     "prisma": "prisma",
+    "studio": "prisma studio",
     "push": "prisma db push",
     "seed": "ts-node ./src/seed.ts",
     "test": "ts-node ./src/test.ts",

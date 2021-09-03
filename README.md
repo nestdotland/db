@@ -1,14 +1,48 @@
-# Nest DB Schema
+# Nest DB
 
-TODO
+This repository is used to manage Nest's DB migrations.
 
 ## Getting started
 
-TODO
+1. Set the evvironment variables
+
+   ```sh
+   cp example.env .env
+   # and update the environmet variables
+   ```
+
+2. Start the Docker container
+
+   ```sh
+   docker-compose up
+   ```
 
 ## Contributing
 
-TODO
+1. Install dependencies
+
+   ```sh
+   yarn install
+   ```
+
+2. Setup Environment
+
+   ```sh
+   cp example.env .env # and update the variables as needed
+   ```
+
+3. Start the container
+
+   ```sh
+   ./dump.sh
+   docker-compose -f docker-compose.dev.yml up -d
+   ```
+
+4. Run Prisma Studio to view the database contents
+
+   ```sh
+   yarn studio
+   ```
 
 ## License
 

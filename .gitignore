@@ -1,4 +1,5 @@
 node_modules
 dist
 *.log
-*.gz
+nest_db.sql*
+.env*
