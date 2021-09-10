@@ -35,7 +35,7 @@
     "node": "16"
   },
   "dependencies": {
-    "@prisma/client": "^3.0.1",
+    "@prisma/client": "^3.0.2",
     "mime": "^2.5.2"
   }
 }
