@@ -4,7 +4,7 @@ docker run -d --rm \
   --env POSTGRES_PASSWORD=postgres \
   --env POSTGRES_USER=postgres \
   --env POSTGRES_DB=postgres \
-  postgres:alpine
+  postgres:13
 
 sleep 30
 

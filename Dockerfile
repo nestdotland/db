@@ -1,4 +1,4 @@
-FROM postgres:alpine
+FROM postgres:13
 
 COPY nest_db.sql.gz /docker-entrypoint-initdb.d/
 

@@ -44,6 +44,8 @@ This repository is used to manage Nest's DB migrations.
    yarn studio
    ```
 
+   Or you can use the pgweb interface on <http://localhost:8081> for advanced usage.
+
 ## License
 
 The contents of this repository are licensed under [The MIT license](LICENSE).

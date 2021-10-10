@@ -2,10 +2,20 @@ version: '3.9'
 
 services:
   db:
-    image: nest_db_dev
+    image: nest_dev_db
+    container_name: nest_dev_db
     build:
       context: .
       dockerfile: Dockerfile
     ports: ['5432:5432']
     env_file: .env
-    container_name: nest_db_dev
+
+  pgweb:
+    depends_on: ['db']
+    image: sosedoff/pgweb:latest
+    container_name: nest_dev_pgweb
+    restart: always
+    links: ['db:nest_dev_db']
+    environment: ['DATABASE_URL=postgres://postgres:postgres@db:5432/postgres?sslmode=disable']
+    ports: ['8081:8081']
+    env_file: .env
