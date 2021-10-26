@@ -49,18 +49,12 @@ export const modules = [
     contributors: ['ry', 'denoland'],
     src: 'https://deno.land/src@',
     versions: [
-      { name: '0.94.0', deps: [], tdeps: [], tpdeps: [] },
-      { name: '0.95.0', deps: [], tdeps: [], tpdeps: [] },
-      { name: '0.96.0', deps: [], tdeps: [], tpdeps: [] },
-      { name: '0.97.0', deps: [], tdeps: [], tpdeps: [] },
-      { name: '0.98.0', deps: [], tdeps: [], tpdeps: [] },
-      { name: '0.99.0', deps: [], tdeps: [], tpdeps: [] },
-    ],
-    tags: [
-      {
-        name: 'latest',
-        version: '0.99.0',
-      },
+      { name: '0.94.0', tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro', deps: [], tpdeps: [] },
+      { name: '0.95.0', tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro', deps: [], tpdeps: [] },
+      { name: '0.96.0', tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro', deps: [], tpdeps: [] },
+      { name: '0.97.0', tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro', deps: [], tpdeps: [] },
+      { name: '0.98.0', tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro', deps: [], tpdeps: [] },
+      { name: '0.99.0', tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro', deps: [], tpdeps: [] },
     ],
     devConfig: {
       ignore: [],
@@ -97,49 +91,39 @@ export const modules = [
     versions: [
       {
         name: '0.1.3',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '0.1.4',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.95.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '0.1.5',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.95.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '0.1.6',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.96.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '0.1.7',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.97.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '0.1.8',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.99.0' }],
-        tdeps: [],
         tpdeps: [],
-      },
-    ],
-    tags: [
-      {
-        name: 'latest',
-        version: '0.1.8',
-      },
-      {
-        name: 'alpha',
-        version: '0.1.8',
       },
     ],
     devConfig: {
@@ -176,47 +160,33 @@ export const modules = [
     versions: [
       {
         name: '0.2.3',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [{ author: 'nestland', name: 'nest', version: '0.1.8', tag: 'alpha' }],
         tpdeps: [],
       },
       {
         name: '0.2.4',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [{ author: 'nestland', name: 'nest', version: '0.1.8', tag: 'alpha' }],
         tpdeps: [],
       },
       {
         name: '0.2.5',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [{ author: 'nestland', name: 'nest', version: '0.1.8', tag: 'alpha' }],
         tpdeps: [],
       },
       {
         name: '0.3.1',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [{ author: 'nestland', name: 'nest', version: '0.1.8', tag: 'alpha' }],
         tpdeps: [],
       },
       {
         name: '0.3.2',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [{ author: 'nestland', name: 'nest', version: '0.1.8', tag: 'alpha' }],
         tpdeps: [],
-      },
-    ],
-    tags: [
-      {
-        name: 'latest',
-        version: '0.3.2',
-      },
-      {
-        name: 'v0',
-        version: '0.3.2',
-      },
-      {
-        name: 'v0.2',
-        version: '0.2.5',
       },
     ],
     devConfig: {
@@ -259,36 +229,35 @@ export const modules = [
     versions: [
       {
         name: '1.0.0',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '1.0.1',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '1.0.2',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.95.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '1.0.3',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.96.0' }],
-        tdeps: [],
         tpdeps: [],
       },
       {
         name: '1.0.5',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.96.0' }],
-        tdeps: [],
         tpdeps: [],
       },
     ],
-    tags: [],
     devConfig: {
       ignore: [],
     },
@@ -317,60 +286,59 @@ export const modules = [
     versions: [
       {
         name: '0.1.0',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.1.0' }],
       },
       {
         name: '0.1.1',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.94.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.1.0' }],
       },
       {
         name: '0.1.2',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.95.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.1.0' }],
       },
       {
         name: '0.1.3',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.96.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.1.1' }],
       },
       {
         name: '0.2.0',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.96.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.1.1' }],
       },
       {
         name: '0.2.1',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.96.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.2.0' }],
       },
       {
         name: '0.3.0',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.97.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.2.0' }],
       },
       {
         name: '0.3.1',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.98.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.2.0' }],
       },
       {
         name: '0.3.2',
+        tx: 'TESTswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro',
         deps: [{ author: 'denoland', name: 'std', version: '0.98.0' }],
-        tdeps: [],
         tpdeps: [{ host: 'cdn.skypack.dev', path: '@octokit/core@^3.2.1' }],
       },
     ],
-    tags: [],
     devConfig: {
       ignore: [],
     },

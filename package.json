@@ -1,9 +1,7 @@
 {
-  "name": "template",
-  "version": "1.0.0",
-  "description": "Repository template",
-  "main": "dist/index.js",
-  "repository": "https://github.com/nestdotland/schema",
+  "name": "db",
+  "description": "This repository is used to manage Nest's DB migrations",
+  "repository": "https://github.com/nestdotland/db",
   "author": "Maximous Black <maximousblk@gmail.com>",
   "license": "MIT",
   "private": true,

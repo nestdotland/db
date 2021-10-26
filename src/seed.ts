@@ -1,6 +1,5 @@
 import { users, modules } from './data';
 import { PrismaClient } from '@prisma/client';
-import { nanoid } from 'nanoid';
 import mimeType from 'mime/lite';
 import * as crypto from 'crypto';
 import prettyBytes from 'pretty-bytes';
@@ -149,25 +148,7 @@ export async function seed() {
               main: moduleData.publishConfig.main,
               bin: moduleData.publishConfig.bin,
               publisherName: moduleData.contributors[0],
-            };
-          })
-        )
-        .flat(),
-    })
-    .then(console.log)
-    .catch(console.error);
-
-  await prisma.tag
-    .createMany({
-      skipDuplicates: true,
-      data: modules
-        .map((moduleData) =>
-          moduleData.tags.map((tag) => {
-            return {
-              name: tag.name,
-              authorName: moduleData.author,
-              moduleName: moduleData.name,
-              versionName: tag.version,
+              manifestid: version.tx,
             };
           })
         )
@@ -189,7 +170,6 @@ export async function seed() {
                 versionName: version.name,
                 path: file,
                 size: Math.floor(Math.random() * 1500),
-                txid: nanoid(43),
                 mimeType: mimeType.getType(file),
               };
             })
@@ -249,29 +229,6 @@ export async function seed() {
                 dependencyAuthor: dep.author,
                 dependencyName: dep.name,
                 dependencyVersion: dep.version,
-              };
-            });
-          })
-        )
-        .flat(2),
-    })
-    .then(console.log)
-    .catch(console.error);
-
-  await prisma.taggedDependencyGraph
-    .createMany({
-      skipDuplicates: true,
-      data: modules
-        .map((moduleData) =>
-          moduleData.versions.map((version) => {
-            return version.tdeps.map((dep) => {
-              return {
-                dependentAuthor: moduleData.author,
-                dependentName: moduleData.name,
-                dependentVersion: version.name,
-                dependencyAuthor: dep.author,
-                dependencyName: dep.name,
-                dependencyTag: dep.tag,
               };
             });
           })

@@ -1,5 +1,5 @@
 generator client {
-  provider        = "prisma-client-js"
+  provider = "prisma-client-js"
 }
 
 datasource db {
@@ -10,7 +10,7 @@ datasource db {
 /// USER
 model User {
   // Properties
-  id        String   @unique @default(uuid()) @db.Uuid // TODO: remove @default() in prod
+  id        String   @unique @default(uuid()) @db.Uuid // TODO: link to auth.users and remove @default() in prod
   username  String   @db.VarChar(64)
   fullName  String?  @db.VarChar(64)
   avatar    String?
@@ -81,8 +81,8 @@ model UsageQuotaPublish {
 
 model AccessToken {
   // Properties
-  id          String       @default(uuid()) @db.Uuid
-  hash        String       @unique @db.Char(64) // TODO: change length according to whatever algo we use
+  hash        String       @db.Char(64) // SHA256
+  memo        String?      @db.VarChar(64)
   permissions Permission[]
   createdAt   DateTime     @default(now())
   updatedAt   DateTime     @default(now()) @updatedAt
@@ -94,14 +94,7 @@ model AccessToken {
   user User @relation(fields: [username], references: [username])
 
   // Primary Key
-  @@id([id], map: "token")
-}
-
-enum Tier {
-  // these are only examples
-  HOBBY // $0 • api  1000 req/hr •  5mb           • public modules
-  PRO //   $4 • api  5000 req/hr • 10mb + $0.1/mb • public modules
-  TEAMS // $6 • api 10000 req/hr • 10mb + $0.1/mb • public modules • private modules • teams
+  @@id([hash], map: "token")
 }
 
 enum Permission {
@@ -134,7 +127,6 @@ model Contribution {
 /// MODULE
 model Module {
   // Properties
-  id          String   @unique @default(uuid()) @db.Uuid
   name        String   @db.VarChar(64)
   fullName    String?  @db.VarChar(64)
   description String?
@@ -156,7 +148,6 @@ model Module {
   authorName String @db.VarChar(64)
 
   // Relationships
-  tags          Tag[]
   teams         Team[]
   versions      Version[]
   devConfig     DevConfig?
@@ -171,7 +162,7 @@ model Module {
 
 enum License {
   // ref: https://api.github.com/licenses
-  // Unknown just means we couldn't figure out what the license name is. It doesn't mean that the license is missing or invalid.
+  // "UNKNOWN" just means we couldn't figure out what the license is. It doesn't mean that the license is missing or invalid.
   UNKNOWN
   BSD_2_CLAUSE
   BSD_3_CLAUSE
@@ -190,8 +181,7 @@ enum License {
 
 model VanityModule {
   // Properties
-  id   String @unique @default(uuid()) @db.Uuid
-  name String @db.VarChar(64)
+  name String @unique @db.VarChar(64)
 
   // Foreign keys
   authorName String @db.VarChar(64)
@@ -201,7 +191,7 @@ model VanityModule {
   module Module @relation(fields: [authorName, moduleName], references: [authorName, name])
 
   // Primary Key
-  @@id([name, authorName, moduleName], map: "vanity_module")
+  @@id([authorName, moduleName], map: "vanity_module")
 }
 
 model PublishConfig {
@@ -210,6 +200,7 @@ model PublishConfig {
   bin       String[]
   lockfile  String?
   importMap String?
+  deno      String?
   updatedAt DateTime @default(now()) @updatedAt
 
   // Foreign keys
@@ -217,8 +208,7 @@ model PublishConfig {
   moduleName String @db.VarChar(64)
 
   // Relationships
-  module  Module            @relation(fields: [authorName, moduleName], references: [authorName, name])
-  engines SupportedEngine[]
+  module Module @relation(fields: [authorName, moduleName], references: [authorName, name])
 
   // Primary Key
   @@id([authorName, moduleName], map: "publish_config")
@@ -250,7 +240,6 @@ enum HookName {
 
 model DevConfigHook {
   // Properties
-  id        String   @unique @default(uuid()) @db.Uuid
   name      HookName
   command   String
   updatedAt DateTime @default(now()) @updatedAt
@@ -269,9 +258,9 @@ model DevConfigHook {
 /// VERSION
 model Version {
   // Properties
-  id            String   @unique @default(uuid()) @db.Uuid
   name          String   @db.VarChar(64)
   publisherName String   @db.VarChar(64)
+  manifestid    String?  @db.Char(43) // E1qkswwu4jfKIUJQHtaahNzvUeG1lAJxaBjO8x6Uxro
   deprecated    Boolean  @default(false)
   vulnerable    Boolean  @default(false)
   unlisted      Boolean  @default(false)
@@ -279,6 +268,7 @@ model Version {
   importMap     String?
   main          String?
   bin           String[]
+  deno          String?
   createdAt     DateTime @default(now())
   updatedAt     DateTime @default(now()) @updatedAt
 
@@ -287,69 +277,15 @@ model Version {
   moduleName String @db.VarChar(64)
 
   // Relationships
-  tag                    Tag[]
   files                  File[]
-  engines                SupportedEngine[]
   dependents             DependencyGraph[]           @relation("rDependentToVersion")
   dependencies           DependencyGraph[]           @relation("rDependencyToVersion")
-  taggedDependencies     TaggedDependencyGraph[]
   thirdPartyDependencies ThirdPartyDependencyGraph[]
   publisher              User                        @relation(fields: [publisherName], references: [username])
   module                 Module                      @relation(fields: [authorName, moduleName], references: [authorName, name])
 
   // Primary Key
   @@id([authorName, moduleName, name], map: "version")
-}
-
-model Engine {
-  // Properties
-  id       String @unique @default(uuid()) @db.Uuid
-  platform String @db.VarChar(64)
-  range    String @db.VarChar(64)
-
-  // relationships
-  support SupportedEngine[]
-
-  // Primary Key
-  @@id([platform, range], map: "engine")
-}
-
-model SupportedEngine {
-  // Foreign keys
-  authorName  String @db.VarChar(64)
-  moduleName  String @db.VarChar(64)
-  versionName String @db.VarChar(64)
-  platform    String @db.VarChar(64)
-  range       String @db.VarChar(64)
-
-  // Relationships
-  engine  Engine        @relation(fields: [platform, range], references: [platform, range])
-  version Version       @relation(fields: [authorName, moduleName, versionName], references: [authorName, moduleName, name])
-  config  PublishConfig @relation(fields: [authorName, moduleName], references: [authorName, moduleName])
-
-  // Primary Key
-  @@id([authorName, moduleName, versionName, platform, range])
-}
-
-model Tag {
-  // Properties
-  id        String   @unique @default(uuid()) @db.Uuid
-  name      String   @db.VarChar(64)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-
-  // Foreign keys
-  authorName  String @db.VarChar(64)
-  moduleName  String @db.VarChar(64)
-  versionName String @db.VarChar(64)
-
-  // Relationships
-  dependents TaggedDependencyGraph[]
-  module     Module                  @relation(fields: [authorName, moduleName], references: [authorName, name])
-  version    Version                 @relation(fields: [authorName, moduleName, versionName], references: [authorName, moduleName, name])
-
-  // Primary Key
-  @@id([authorName, moduleName, name], map: "tag")
 }
 
 model DependencyGraph {
@@ -369,26 +305,8 @@ model DependencyGraph {
   @@id([dependentAuthor, dependentName, dependentVersion, dependencyAuthor, dependencyName, dependencyVersion])
 }
 
-model TaggedDependencyGraph {
-  // Foreign keys
-  dependentAuthor  String @db.VarChar(64)
-  dependentName    String @db.VarChar(64)
-  dependentVersion String @db.VarChar(64)
-  dependencyAuthor String @db.VarChar(64)
-  dependencyName   String @db.VarChar(64)
-  dependencyTag    String @db.VarChar(64)
-
-  // Relationships
-  dependent  Version @relation(fields: [dependentAuthor, dependentName, dependentVersion], references: [authorName, moduleName, name])
-  dependency Tag     @relation(fields: [dependencyAuthor, dependencyName, dependencyTag], references: [authorName, moduleName, name])
-
-  // Primary Key
-  @@id([dependentAuthor, dependentName, dependentVersion, dependencyAuthor, dependencyName, dependencyTag])
-}
-
 model ThirdPartyModule {
   // Properties
-  id   String @unique @default(uuid()) @db.Uuid
   path String
 
   // Foreign keys
@@ -404,7 +322,6 @@ model ThirdPartyModule {
 
 model ThirdPartyHost {
   // Properties
-  id       String  @unique @default(uuid()) @db.Uuid
   hostname String
   verified Boolean @default(false)
 
@@ -434,9 +351,7 @@ model ThirdPartyDependencyGraph {
 /// FILE
 model File {
   // Properties
-  id        String   @unique @default(uuid()) @db.Uuid
   path      String
-  txid      String   @db.VarChar(43) // E1qkswwu4jfKIUJQ_-aahNzvUeG1lAJxaBjO8x6Uxro
   size      Int
   mimeType  String?  @db.VarChar(64)
   createdAt DateTime @default(now())
@@ -456,7 +371,6 @@ model File {
 /// TEAM
 model Team {
   // Properties
-  id         String   @unique @default(uuid()) @db.Uuid
   name       String   @db.VarChar(64)
   moduleName String   @db.VarChar(64)
   createdAt  DateTime
@@ -499,20 +413,27 @@ enum TeamPermission {
 }
 
 /// STRIPE
+enum StripeTier {
+  // these are only examples
+  HOBBY // $0 • api  1000 req/hr •  5mb           • public modules
+  PRO //   $4 • api  5000 req/hr • 10mb + $0.1/mb • public modules
+  TEAMS // $6 • api 10000 req/hr • 10mb + $0.1/mb • public modules • private modules • teams
+}
+
 enum StripePlan {
-  HOBBY
-  PRO
-  TEAMS
-  OVERAGE
+  HOBBY //   $0/mo
+  PRO //     $4/mo
+  TEAMS //   $6/mo
+  OVERAGE // $0/mo + $0.1/mb/mo
 }
 
 model StripeCustomer {
-  id             String @db.VarChar(18) // cus_K2Y09LC0tkknJZ
-  tier           Tier   @default(HOBBY)
-  payment_method Json //                   Stores your customer's payment instruments.
+  id             String     @db.VarChar(18) // cus_K2Y09LC0tkknJZ
+  tier           StripeTier @default(HOBBY)
+  payment_method Json // Stores your customer's payment instruments (do we need this?)
 
   // Foreign keys
-  username String @db.VarChar(64)
+  username String @unique @db.VarChar(64)
 
   // Relationships
   subscription StripeSubscription[]
@@ -537,18 +458,18 @@ model StripeProduct {
   @@id([id], map: "product")
 }
 
-enum StripePriceInterval {
+enum StripeTerm {
   MONTH
   YEAR
 }
 
 model StripePrice {
-  id                   String              @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
-  price                Int //                                 The unit amount as a positive integer in the smallest currency unit
-  active               Boolean //                             Whether the price can be used for new purchases.
-  interval             StripePriceInterval //                 The frequency at which a subscription is billed.
-  interval_count       Int //                                 The number of intervals between subscription billings.
-  trial_interval_count Int //                                 The number of trial intervals when subscribing a customer to this price
+  id                   String     @db.VarChar(30) // price_1JOJxPGRIHfUwmWv8z0WKz5a
+  price                Int //                        The unit amount as a positive integer in the smallest currency unit
+  active               Boolean //                    Whether the price can be used for new purchases.
+  interval             StripeTerm //                 The frequency at which a subscription is billed.
+  interval_count       Int //                        The number of intervals between subscription billings.
+  trial_interval_count Int //                        The number of trial intervals when subscribing a customer to this price
 
   // Foreign keys
   product_id String @db.VarChar(19) // prod_K2OkC0R6yfuwhH
