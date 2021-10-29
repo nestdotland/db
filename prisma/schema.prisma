@@ -15,6 +15,7 @@ model User {
   fullName  String?  @db.VarChar(64)
   avatar    String?
   bio       String?
+  wallet    String?  @db.Char(43)
   funding   String?
   verified  Boolean  @default(false)
   createdAt DateTime @default(now())
