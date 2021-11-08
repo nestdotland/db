@@ -35,6 +35,6 @@
   },
   "dependencies": {
     "@prisma/client": "^3.3.0",
-    "mime": "^2.5.2"
+    "mime": "^3.0.0"
   }
 }
